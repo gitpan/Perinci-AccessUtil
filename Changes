@@ -1,5 +1,10 @@
 Revision history for Perinci-AccessUtil
 
+0.04    2014-10-23 (PERLANCAR)
+
+	- Add function: decode_args_in_riap_req().
+
+
 0.03    2014-10-23 (PERLANCAR)
 
 	- Add function: insert_riap_stuffs_to_res.

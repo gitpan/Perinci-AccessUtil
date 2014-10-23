@@ -5,7 +5,8 @@ use strict;
 use warnings;
 
 use Perinci::AccessUtil qw(insert_riap_stuffs_to_res
-                           strip_riap_stuffs_from_res);
+                           strip_riap_stuffs_from_res
+                           decode_args_in_riap_req);
 use Test::More 0.98;
 
 subtest "insert_riap_stuffs_to_res" => sub {
@@ -61,6 +62,17 @@ subtest "strip_riap_stuffs_from_res" => sub {
                   "unknown riap.result_encoding value");
         is_deeply(strip_riap_stuffs_from_res([200,"OK","AAAA",{"riap.v"=>1.2, "riap.result_encoding"=>"base64"}]), [200,"OK","\0\0\0",{}],
                   "base64 decoding of result");
+    };
+};
+
+subtest "decode_args_in_riap_req" => sub {
+    subtest "v1.1" => sub {
+        is_deeply(decode_args_in_riap_req({args=>{"a:base64"=>"AAAA", b=>"\0"}}),
+                  {args=>{"a:base64"=>"AAAA", b=>"\0"}},
+                  "decoding not active when version=1.1");
+        is_deeply(decode_args_in_riap_req({v=>1.2, args=>{"a:base64"=>"AAAA", b=>"\0"}}),
+                  {v=>1.2, args=>{"a"=>"\0\0\0", b=>"\0"}},
+                  "decoding active when version=1.2");
     };
 };
 

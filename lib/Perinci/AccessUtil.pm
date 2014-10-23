@@ -1,15 +1,19 @@
 package Perinci::AccessUtil;
 
 our $DATE = '2014-10-23'; # DATE
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 
 use 5.010001;
 use strict;
 use warnings;
 
+use MIME::Base64;
+
 require Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(insert_riap_stuffs_to_res strip_riap_stuffs_from_res);
+our @EXPORT_OK = qw(insert_riap_stuffs_to_res
+                    strip_riap_stuffs_from_res
+                    decode_args_in_riap_req);
 
 sub insert_riap_stuffs_to_res {
     my ($res, $def_ver, $nmeta) = @_;
@@ -25,8 +29,7 @@ sub insert_riap_stuffs_to_res {
             }
             last unless defined($res->[2]) && !ref($res->[2]) &&
                 $res->[2] =~ /[^\x20-\x7f]/;
-            require MIME::Base64;
-            $res->[2] = MIME::Base64::encode_base64($res->[2]);
+            $res->[2] = encode_base64($res->[2]);
             $res->[3]{'riap.result_encoding'} = 'base64';
         }
     }
@@ -51,8 +54,7 @@ sub strip_riap_stuffs_from_res {
                 return [501, "Unknown result_encoding returned by server ".
                             "($val), only base64 is supported"]
                     unless $val eq 'base64';
-                require MIME::Base64;
-                $res->[2] = MIME::Base64::decode_base64($res->[2]//'');
+                $res->[2] = decode_base64($res->[2]//'');
             } else {
                 return [501, "Unknown Riap attribute in result metadata ".
                             "returned by server ($k)"];
@@ -62,6 +64,23 @@ sub strip_riap_stuffs_from_res {
     }
 
     $res;
+}
+
+sub decode_args_in_riap_req {
+    my $req = shift;
+
+    my $v = $req->{v} // 1.1;
+    if ($v >= 1.2) {
+        if ($req->{args}) {
+            my $args = $req->{args};
+            for (keys %$args) {
+                next unless /\A(.+):base64\z/;
+                $args->{$1} = decode_base64($args->{$_});
+                delete $args->{$_};
+            }
+        }
+    }
+    $req;
 }
 
 1;
@@ -79,12 +98,22 @@ Perinci::AccessUtil - Utility module for Riap client/server
 
 =head1 VERSION
 
-This document describes version 0.03 of Perinci::AccessUtil (from Perl distribution Perinci-AccessUtil), released on 2014-10-23.
+This document describes version 0.04 of Perinci::AccessUtil (from Perl distribution Perinci-AccessUtil), released on 2014-10-23.
 
 =head1 SYNOPSIS
 
- use Perinci::AccessUtil qw(strip_riap_stuffs_from_res);
- my $res = strip_riap_stuffs_from_res([200,"OK"]);
+ use Perinci::AccessUtil qw(
+     strip_riap_stuffs_from_res
+     insert_riap_stuffs_to_res
+     decode_args_in_riap_req
+ );
+
+ strip_riap_stuffs_from_res([200,"OK",undef,{"riap.v"=>1.1}]); # => [200,"OK",undef]
+ strip_riap_stuffs_from_res([200,"OK",undef,{"riap.foo"=>1}]); # => [501, "Unknown Riap attribute in result metadata: riap.foo"]
+
+ insert_riap_stuffs_to_res([200,"OK",undef); # => [200,"OK",undef,{"riap.v"=>1.1}]
+
+ decode_args_in_riap_req({v=>1.2, args=>{"a:base64"=>"AAAA"}}); # => {v=>1.2, args=>{a=>"\0\0\0"}}
 
 =head1 DESCRIPTION
 
@@ -113,6 +142,11 @@ L<Perinci::Access::Simple::Client>.
 If there is no error, will return C<$envres> with all C<riap.*> keys already
 stripped. If there is an error, an error response will be returned instead.
 Either way, you can use the response returned by this function to user.
+
+=head2 decode_args_in_riap_req($req) => $req
+
+Replace C<ARGNAME:base64> keys in C<arg> in Riap request C<$req> with their
+decoded values. Only done when C<v> key is at least 1.2.
 
 =head1 SEE ALSO
 
