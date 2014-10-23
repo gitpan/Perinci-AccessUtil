@@ -2,7 +2,7 @@ NAME
     Perinci::AccessUtil - Utility module for Riap client/server
 
 VERSION
-    This document describes version 0.02 of Perinci::AccessUtil (from Perl
+    This document describes version 0.03 of Perinci::AccessUtil (from Perl
     distribution Perinci-AccessUtil), released on 2014-10-23.
 
 SYNOPSIS
@@ -11,6 +11,14 @@ SYNOPSIS
 
 DESCRIPTION
 FUNCTIONS
+  insert_riap_stuffs_to_res($envres[, $def_ver, $nmeta]) => array
+    Starting in Riap protocol v1.2, server is required to return "riap.v" in
+    result metadata. This routine does just that. In addition to that, this
+    routine also encodes result with base64 when necessary.
+
+    This routine is used by Riap network server libraries, e.g.
+    Perinci::Access::HTTP::Server and Perinci::Access::Simple::Server.
+
   strip_riap_stuffs_from_res($envres) => array
     Starting in Riap protocol v1.2, client is required to check and strip
     all "riap.*" keys in result metadata ("$envres->[3]"). This routine does
