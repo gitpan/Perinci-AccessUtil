@@ -1,0 +1,12 @@
+Revision history for Perinci-AccessUtil
+
+0.02     2014-10-23 (PERLANCAR)
+
+         - Rename module from Perinci::AccessUtil::Check to Perinci::AccessUtil.
+           Rename function from check_riap_res() to
+           strip_riap_stuffs_from_res().
+
+
+0.01     2014-10-23 (PERLANCAR)
+
+         - First release.

@@ -1,0 +1,56 @@
+NAME
+    Perinci::AccessUtil - Utility module for Riap client/server
+
+VERSION
+    This document describes version 0.02 of Perinci::AccessUtil (from Perl
+    distribution Perinci-AccessUtil), released on 2014-10-23.
+
+SYNOPSIS
+     use Perinci::AccessUtil qw(strip_riap_stuffs_from_res);
+     my $res = strip_riap_stuffs_from_res([200,"OK"]);
+
+DESCRIPTION
+FUNCTIONS
+  strip_riap_stuffs_from_res($envres) => array
+    Starting in Riap protocol v1.2, client is required to check and strip
+    all "riap.*" keys in result metadata ("$envres->[3]"). This routine does
+    just that. In addition, this routine also decode result if
+    "riap.result_encoding" is set, so the user already gets the decoded
+    content.
+
+    This routine is used by Riap client libraries, e.g.
+    Perinci::Access::Lite, Perinci::Access::Perl, and
+    Perinci::Access::HTTP::Client, Perinci::Access::Simple::Client.
+
+    If there is no error, will return $envres with all "riap.*" keys already
+    stripped. If there is an error, an error response will be returned
+    instead. Either way, you can use the response returned by this function
+    to user.
+
+SEE ALSO
+    Riap, Perinci::Access.
+
+HOMEPAGE
+    Please visit the project's homepage at
+    <https://metacpan.org/release/Perinci-AccessUtil>.
+
+SOURCE
+    Source repository is at
+    <https://github.com/perlancar/perl-Perinci-AccessUtil-Check>.
+
+BUGS
+    Please report any bugs or feature requests on the bugtracker website
+    <https://rt.cpan.org/Public/Dist/Display.html?Name=Perinci-AccessUtil>
+
+    When submitting a bug or request, please include a test-file or a patch
+    to an existing test-file that illustrates the bug or desired feature.
+
+AUTHOR
+    perlancar <perlancar@cpan.org>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2014 by perlancar@cpan.org.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+
