@@ -41,6 +41,9 @@ subtest "insert_riap_stuffs_to_res" => sub {
         is_deeply(insert_riap_stuffs_to_res([200,"OK","abc"], 1.2),
                   [200,"OK","abc",{"riap.v"=>1.2}],
                   "encoding is not active if string doesn't contain nonprintable");
+        is_deeply(insert_riap_stuffs_to_res([200,"OK","\0\0\0"], 1.2, undef, 0),
+                  [200,"OK","\0\0\0",{"riap.v"=>1.2}],
+                  "encoding is not active if given option encode=0");
     };
 };
 

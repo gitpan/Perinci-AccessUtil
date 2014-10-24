@@ -2,8 +2,8 @@ NAME
     Perinci::AccessUtil - Utility module for Riap client/server
 
 VERSION
-    This document describes version 0.04 of Perinci::AccessUtil (from Perl
-    distribution Perinci-AccessUtil), released on 2014-10-23.
+    This document describes version 0.05 of Perinci::AccessUtil (from Perl
+    distribution Perinci-AccessUtil), released on 2014-10-24.
 
 SYNOPSIS
      use Perinci::AccessUtil qw(
@@ -21,7 +21,7 @@ SYNOPSIS
 
 DESCRIPTION
 FUNCTIONS
-  insert_riap_stuffs_to_res($envres[, $def_ver, $nmeta]) => array
+  insert_riap_stuffs_to_res($envres[, $def_ver, $nmeta, $decode]) => array
     Starting in Riap protocol v1.2, server is required to return "riap.v" in
     result metadata. This routine does just that. In addition to that, this
     routine also encodes result with base64 when necessary.
@@ -48,6 +48,9 @@ FUNCTIONS
   decode_args_in_riap_req($req) => $req
     Replace "ARGNAME:base64" keys in "arg" in Riap request $req with their
     decoded values. Only done when "v" key is at least 1.2.
+
+    This routine is used in Riap server libraries like in
+    Perinci::Access::HTTP::Server and Perinci::Access::Simple::Server::*.
 
 SEE ALSO
     Riap, Perinci::Access.

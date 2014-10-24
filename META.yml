@@ -23,7 +23,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Perinci-AccessUtil
   homepage: https://metacpan.org/release/Perinci-AccessUtil
   repository: git://github.com/perlancar/perl-Perinci-AccessUtil-Check.git
-version: '0.04'
+version: '0.05'
 x_Dist_Zilla:
   perl:
     version: '5.018002'
